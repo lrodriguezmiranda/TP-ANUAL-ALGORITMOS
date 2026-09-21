@@ -152,5 +152,5 @@ int main() {
 
     cout << "Finalizacion del proceso de normalizacion" << endl;
 
-	return 0;
+    return 0;
 }
