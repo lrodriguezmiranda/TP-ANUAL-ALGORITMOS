@@ -9,7 +9,7 @@ const int Max_Producto = 100;
 const int Max_Comandas = 300;
 
 struct Producto {
-    int int codigo;
+    int codigo;
     char descripcion[50];
     float precio;
     int stockActual;
