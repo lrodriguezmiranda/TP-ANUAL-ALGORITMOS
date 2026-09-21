@@ -34,15 +34,15 @@ struct Comanda{
 void encriptar(char clave[]) {
     int i = 0;
     while (clave [i] != '/0') {
-        clave [i] = clave [i] + K;
+        clave [i] = clave [i] + k;
         i++;
     }
 }
 
 // Carga de mozos
 
-iint cargaMozos(Mozo mozos[]) {
-    File* f = fopen ("mozos.dat", "rb")
+int cargaMozos(Mozo mozos[]) {
+    FILE * f = fopen ("mozos.dat", "rb");
     if (f == null){
         cout << "No se pudo abrir mozos.dat" << endl;
         return 0;
@@ -61,7 +61,7 @@ iint cargaMozos(Mozo mozos[]) {
 
 int buscarMozo (Mozo mozos[], int cantidadMozos, int idMozo){
 
-    For(int i =0; i< cantidadMozos; i++) {
+    for(int i =0; i< cantidadMozos; i++) {
         
         if (mozos[i].idMozo == int idMozo) {
             return i;
@@ -85,9 +85,9 @@ bool validarContrasena(Mozo mozo, char ClaveIngresada[]) {
 
 int cargarInventario (Producto productos[]) {
 
-    File* f = fopen("inventario.dat", "rb");
+    FILE * f = fopen("inventario.dat", "rb");
 
-    if (f == null) {
+    if (f == NULL) {
         cout << "No se pudo abrir inventario.dat" << endl;
         return 0; 
     }
@@ -107,7 +107,7 @@ int buscarProducto(Producto productos[], int cantidadProductos, int codigoProduc
 
     for(int i = 0; i < cantidadProductos; i++) {
         if (productos[i].codigo == codigoProducto) {
-            Return i;
+            return i;
         }
     }
     return -1;
@@ -209,8 +209,8 @@ int main() {
     strcat(nombreArchivo, fecha);
     strcat(nombreArchivo, ".dat");
 
-    File* f = fopen(nombreArchivo, "a+b");
-    if(f == null) {
+    FILE* f = fopen(nombreArchivo, "a+b");
+    if(f == NULL) {
         cout << "No se pudo abrir la planilla del dia" << endl;
         return 1;
     }
