@@ -5,7 +5,7 @@
 const int k = 3;
 const float Tasa_Comision = 0.10f;
 const int Max_Mozos = 50;
-const int Max_Producto = 100;
+const int Max_Productos = 100;
 const int Max_Comandas = 300;
 
 struct Producto {
@@ -119,14 +119,14 @@ void guardarInventario(Producto productos[], int cantidadProductos) {
 
     File+ f = fopen ("inventario.dat", "r+b");
     
-    if (f == null) {
+    if (f == NULL) {
         cout << "No se pudo abrir inventario.dat" << endl;
         return;
     }
 
     for (int i = 0; i < cantidadProductos, i++) {
         fseek(f, i * sizeof(Producto), seek_set);
-        fwrite(&producto[i], sizeof(producto), 1, f);
+        fwrite(&producto[i], sizeof(Producto), 1, f);
     }
 
     fclose(f);
@@ -134,7 +134,7 @@ void guardarInventario(Producto productos[], int cantidadProductos) {
 
 // Agregar comanda
 
-void agregarComanda(File* f, Comanda comanda) {
+void agregarComanda(FILE* f, Comanda comanda) {
     fseek (f, 0, seek_end);
     fwrite (&comanda, sizeof(Comanda), 1, f);
 }
@@ -143,7 +143,7 @@ void agregarComanda(File* f, Comanda comanda) {
 
 void ordenarComandas(Comanda comandas[], int cantidadComandas) {
 
-    For (int i = 0; i < cantidadComandas - 1; i++) {
+    for (int i = 0; i < cantidadComandas - 1; i++) {
         for(int j = 0; j < cantidadComandas -1 - i; j++) {
             if(comandas[j].int idMozo > comandas[j + 1].idMozo) {
                 comanda aux = comandas [j];
@@ -156,7 +156,7 @@ void ordenarComandas(Comanda comandas[], int cantidadComandas) {
 
 // Leer comandas del dia
 
-int cargaComandas(File* f, Comanda comandas[]) {
+int cargaComandas(FILE* f, Comanda comandas[]) {
     
     rewind(f);
 
@@ -171,7 +171,7 @@ int cargaComandas(File* f, Comanda comandas[]) {
 
 // Comandas ordenadas
 
-void guardarComandsOrdenadas (File* f, Comanda comandas[], int cantidadComandas) {
+void guardarComandsOrdenadas (FILE* f, Comanda comandas[], int cantidadComandas) {
 
     ordenarComandas(comandas, cantidadComandas);
     freopen(null, "w+b", f);
