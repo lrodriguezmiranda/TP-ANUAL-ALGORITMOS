@@ -119,6 +119,22 @@ int extraerMozos(ComandaHistorica historicas[], int cantidadHistoricas, Mozo moz
     return cantidadMozos;
 }
 
+void transformarComandas(ComandaHistorica historicas[], int cantidadHistorica, Mozo mozos[], int cantidadMozos){
+    Comanda c;
+    for(int i=0; i<cantidadHistorica; i++){
+        for(int j=0; j<cantidadMozos; j++){
+            //Busqueda secuencial de nombreMozo para obtener su idMozo
+            if(strcmp(historicas[i].nombreMozo, mozos[j].nombre)==0){
+                c.idMozo=mozos[j].idMozo;
+                break;
+            }
+        }
+        c.codigoProducto=historicas[i].codigoProducto;
+        c.cantidad=historicas[i].cantidad;
+        c.comision=historicas[i].comision;
+    }
+}
+
 void grabarMozos(Mozo mozos[], int cantidadMozos) {
     FILE* f = fopen("mozos.dat", "wb");
 
