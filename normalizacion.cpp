@@ -119,20 +119,34 @@ int extraerMozos(ComandaHistorica historicas[], int cantidadHistoricas, Mozo moz
     return cantidadMozos;
 }
 
-void transformarComandas(ComandaHistorica historicas[], int cantidadHistorica, Mozo mozos[], int cantidadMozos){
-    Comanda c;
-    for(int i=0; i<cantidadHistorica; i++){
+void transformarComandas(ComandaHistorica historicas[], int cantidadHistoricas, Mozo mozos[], int cantidadMozos, Comanda comandas[], int& cantidadComandas){
+    for(int i=0; i<cantidadHistoricas; i++){  
         for(int j=0; j<cantidadMozos; j++){
             //Busqueda secuencial de nombreMozo para obtener su idMozo
             if(strcmp(historicas[i].nombreMozo, mozos[j].nombre)==0){
-                c.idMozo=mozos[j].idMozo;
+                comandas[cantidadComandas].idMozo=mozos[j].idMozo;
                 break;
             }
         }
-        c.codigoProducto=historicas[i].codigoProducto;
-        c.cantidad=historicas[i].cantidad;
-        c.comision=historicas[i].comision;
+        //Guardar las comandas transformadas en el arreglo comandas
+        comandas[cantidadComandas].codigoProducto=historicas[i].codigoProducto;
+        comandas[cantidadComandas].cantidad=historicas[i].cantidad;
+        comandas[cantidadComandas].comision=historicas[i].comision;
+        cantidadComandas++;
     }
+}
+
+void crearArchivosDiarios(const char* nombreArchivo, Comanda comandas[], int cantidadComandas){
+    FILE* f = fopen(nombreArchivo, "wb");
+    if(f == NULL){
+        cout<<"No se pudo crear el archivo."<<endl;
+        return;
+    }
+    for(int i=0; i<cantidadComandas; i++){
+        fwrite(&comandas[i], sizeof(Comanda), 1, f);
+    }
+    fclose(f);
+    cout<<"Archivo creado."<<endl;
 }
 
 void grabarMozos(Mozo mozos[], int cantidadMozos) {
@@ -154,6 +168,7 @@ int main() {
 
     ComandaHistorica historicas[MAX_COMANDAS]; //DECLARACIONES
     Mozo mozos[MAX_MOZOS];
+    Comanda comandas[MAX_COMANDAS];
 
     cout << "Inicio del proceso de normalizacion" << endl;
 
@@ -162,6 +177,10 @@ int main() {
 
     int cantidadMozos = extraerMozos(historicas, cantidadHistoricas, mozos);
     cout << "Se identificaron " << cantidadMozos << " mozos unicos" << endl;
+
+    int cantidadComandas = 0;
+
+    transformarComandas(historicas, cantidadHistoricas, mozos, cantidadMozos, comandas, cantidadComandas);
 
     grabarMozos(mozos, cantidadMozos);
     cout << "Archivo mozos.dat creado" << endl;
