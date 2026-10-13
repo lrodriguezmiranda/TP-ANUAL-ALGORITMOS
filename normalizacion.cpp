@@ -128,6 +128,7 @@ void transformarComandas(ComandaHistorica historicas[], int cantidadHistoricas, 
                 break;
             }
         }
+
         //Guardar las comandas transformadas en el arreglo comandas
         comandas[cantidadComandas].codigoProducto=historicas[i].codigoProducto;
         comandas[cantidadComandas].cantidad=historicas[i].cantidad;
@@ -136,18 +137,59 @@ void transformarComandas(ComandaHistorica historicas[], int cantidadHistoricas, 
     }
 }
 
-void crearArchivosDiarios(const char* nombreArchivo, Comanda comandas[], int cantidadComandas){
-    FILE* f = fopen(nombreArchivo, "wb");
-    if(f == NULL){
-        cout<<"No se pudo crear el archivo."<<endl;
-        return;
+void crearArchivosDiarios(ComandaHistorica historicas[], int cantidadHistoricas, Comanda comandas[]){
+    for(int i=0; i<cantidadHistoricas; i++){
+        bool fechaRepetida = false;
+        for(int j=0; j<i; j++){
+            if(strcmp(historicas[i].fecha, historicas[j].fecha)==0){
+                fechaRepetida = true;
+            }
+        }
+        if(!fechaRepetida){
+            //Nombre y creacion de archivos
+            char nombreArchivo[50] = "comandas_";
+            strcat(nombreArchivo, historicas[i].fecha);
+            strcat(nombreArchivo, ".dat");
+            
+            FILE* f = fopen(nombreArchivo, "wb");
+            if(f == NULL){
+                cout<<"No se pudo crear el archivo."<<endl;
+                return;
+            }
+            
+            Comanda comandasPorDia[MAX_COMANDAS];
+            int cantidadComandasPorDia=0;
+
+            for(int k=0; k<cantidadHistoricas; k++){
+                
+                //Si las fechas son iguales, corresponden al mismo archivo
+                if(strcmp(historicas[i].fecha, historicas[k].fecha)==0){
+                    comandasPorDia[cantidadComandasPorDia]=comandas[k];
+                    cantidadComandasPorDia++;
+                }
+            }
+            
+            ordenarComandasPorMozo(comandasPorDia, cantidadComandasPorDia);
+
+            //Grabar las comandas ordenadas por mozo
+            for(int m=0; m<cantidadComandasPorDia; m++){
+                fwrite(&comandasPorDia[m], sizeof(Comanda),1, f);
+            }
+            fclose(f);
+            cout<<"Archivo creado."<<endl;
+        }
     }
-    for(int i=0; i<cantidadComandas; i++){
-        fwrite(&comandas[i], sizeof(Comanda), 1, f);
-    }
-    fclose(f);
-    cout<<"Archivo creado."<<endl;
 }
+
+void ordenarComandasPorMozo(Comanda comandasPorDia[], int cantidadComandasPorDia){
+    int posicionActual;
+    Comanda valorPosicion;
+    for(int i=0; i<cantidadComandasPorDia; i++){
+        posicionActual=i;
+        valorPosicion=comandasPorDia[i];
+    }               
+}
+
 
 void grabarMozos(Mozo mozos[], int cantidadMozos) {
     FILE* f = fopen("mozos.dat", "wb");
