@@ -7,6 +7,7 @@ const int K = 3; // K=3 !!!
 const float TASA_COMISION = 0.10f;
 const int MAX_MOZOS = 50;          // tamaño del array de mozos, margen grande por si acaso
 const int MAX_COMANDAS = 300;	  // tamaño del array de comandas, margen grande por si acaso
+const int MAX_PRODUCTOS = 50;    // tamaño del array de productos del inventari
 
 struct ComandaHistorica {        //enunciado 
     char fecha[11];         // "DD-MM-AAAA" + '\0'
@@ -70,6 +71,20 @@ int cargarComandasHistoricas(ComandaHistorica historicas[]) { //ARCHIVO DEL LA L
 
     fclose(f);
     return cantidadRegistros;
+}
+
+int cargarInventario(Producto productos[]) {
+    FILE* f = fopen("inventario.dat", "rb");
+    if (f == NULL) {
+        cout << "No se pudo abrir el archivo inventario.dat" << endl;
+        return 0;
+    }
+    int cantidadProductos = 0;
+    while (fread(&productos[cantidadProductos], sizeof(Producto), 1, f) == 1) {
+        cantidadProductos++;
+    }
+    fclose(f);
+    return cantidadProductos;
 }
 
 int extraerMozos(ComandaHistorica historicas[], int cantidadHistoricas, Mozo mozos[]) { //RECORRE COMANDAS HISTORICAS Y ARMA UN  ARRAY DE MOZOS SIN REPETIR
@@ -148,6 +163,22 @@ void ordenarComandasPorMozo(Comanda comandasPorDia[], int cantidadComandasPorDia
             posicionActual--;
         }
         comandasPorDia[posicionActual + 1] = valorPosicion;
+    }
+}
+
+void actualizarStock(ComandaHistorica historicas[], int cantidadHistoricas, Producto productos[], int cantidadProductos) {
+    for (int i = 0; i < cantidadHistoricas; i++) {
+        // busqueda secuencial del producto por codigo
+        int posicion = -1;
+        for (int j = 0; j < cantidadProductos; j++) {
+            if (productos[j].codigo == historicas[i].codigoProducto) {
+                posicion = j;
+            }
+        }
+        if (posicion != -1) {
+            // Descuento la cantidad vendida del stock
+            productos[posicion].stockActual = productos[posicion].stockActual - historicas[i].cantidad;
+        }
     }
 }
 
