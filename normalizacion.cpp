@@ -137,6 +137,20 @@ void transformarComandas(ComandaHistorica historicas[], int cantidadHistoricas, 
     }
 }
 
+void ordenarComandasPorMozo(Comanda comandasPorDia[], int cantidadComandasPorDia) {
+    int posicionActual;
+    Comanda valorPosicion;
+    for (int i = 1; i < cantidadComandasPorDia; i++) {
+        valorPosicion = comandasPorDia[i];
+        posicionActual = i - 1;
+        while (posicionActual >= 0 && comandasPorDia[posicionActual].idMozo > valorPosicion.idMozo) {
+            comandasPorDia[posicionActual + 1] = comandasPorDia[posicionActual];
+            posicionActual--;
+        }
+        comandasPorDia[posicionActual + 1] = valorPosicion;
+    }
+}
+
 void crearArchivosDiarios(ComandaHistorica historicas[], int cantidadHistoricas, Comanda comandas[]){
     for(int i=0; i<cantidadHistoricas; i++){
         bool fechaRepetida = false;
@@ -181,15 +195,6 @@ void crearArchivosDiarios(ComandaHistorica historicas[], int cantidadHistoricas,
     }
 }
 
-void ordenarComandasPorMozo(Comanda comandasPorDia[], int cantidadComandasPorDia){
-    int posicionActual;
-    Comanda valorPosicion;
-    for(int i=0; i<cantidadComandasPorDia; i++){
-        posicionActual=i;
-        valorPosicion=comandasPorDia[i];
-    }               
-}
-
 
 void grabarMozos(Mozo mozos[], int cantidadMozos) {
     FILE* f = fopen("mozos.dat", "wb");
@@ -223,6 +228,9 @@ int main() {
     int cantidadComandas = 0;
 
     transformarComandas(historicas, cantidadHistoricas, mozos, cantidadMozos, comandas, cantidadComandas);
+
+    crearArchivosDiarios(historicas, cantidadHistoricas, comandas);
+    cout << "Archivos diarios creados" << endl;
 
     grabarMozos(mozos, cantidadMozos);
     cout << "Archivo mozos.dat creado" << endl;
