@@ -207,14 +207,14 @@ int main() {
     }
 
     char continuar = 's';
-    while (continuar == 's' || continuar == 's') {
+    while (continuar == 's' || continuar == 'S') {
         
         int idMozo;
         cout << "Ingrese numero de mozo:";
         cin >> idMozo;
 
         int posicionMozo = buscarMozo(mozos, cantidadMozos, idMozo);
-        If (posicionMozo == -1) {
+        if (posicionMozo == -1) {
             cout << "El numero de mozo no existe";
             continue;
         }
@@ -230,7 +230,7 @@ int main() {
 
         int codigoProducto;
         cout << "Ingrese codigo del producto:";
-        cin >> codigoProducto
+        cin >> codigoProducto;
 
         int posicionProducto = buscarProducto(productos, cantidadProductos, codigoProducto);
         if (posicionProducto == -1) {
@@ -241,19 +241,19 @@ int main() {
         int cantidad;
         cout << "Ingrese cantidad:";
         cin >> int cantidad;
-        if (cantidad >= 0) {
+        if (cantidad <= 0) {
             cout << "La cantidad debe ser mayor a cero";
             continue;
         }
 
-        if(cantidad > productos[posicionProducto].stackActual) {
+        if(cantidad > productos[posicionProducto].stockActual) {
             cout << "No hay stock suficiente";
             continue;
         }
 
-        float importe = productos[posicionProducto].precio * int cantidad;
+        float importe = productos[posicionProducto].precio * cantidad;
         float comision = importe * Tasa_Comision;
-        comanda nuevaComanda;
+        Comanda nuevaComanda;
         nuevaComanda.idMozo = idMozo;
         nuevaComanda.codigoProducto = codigoProducto;
         nuevaComanda.cantidad = cantidad;
