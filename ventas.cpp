@@ -146,7 +146,7 @@ void ordenarComandas(Comanda comandas[], int cantidadComandas) {
 
     for (int i = 0; i < cantidadComandas - 1; i++) {
         for(int j = 0; j < cantidadComandas -1 - i; j++) {
-            if(comandas[j].int idMozo > comandas[j + 1].idMozo) {
+            if(comandas[j].idMozo > comandas[j + 1].idMozo) {
                 Comanda aux = comandas [j];
                 comandas[j] = comandas [j + 1];
                 comandas[j + 1] = aux;
