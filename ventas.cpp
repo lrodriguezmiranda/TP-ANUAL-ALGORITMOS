@@ -118,14 +118,14 @@ int buscarProducto(Producto productos[], int cantidadProductos, int codigoProduc
 
 void guardarInventario(Producto productos[], int cantidadProductos) {
 
-    File+ f = fopen ("inventario.dat", "r+b");
+    FILE* f = fopen ("inventario.dat", "r+b");
     
     if (f == NULL) {
         cout << "No se pudo abrir inventario.dat" << endl;
         return;
     }
 
-    for (int i = 0; i < cantidadProductos, i++) {
+    for (int i = 0; i < cantidadProductos; i++) {
         fseek(f, i * sizeof(Producto), SEEK_END);
         fwrite(&producto[i], sizeof(Producto), 1, f);
     }
