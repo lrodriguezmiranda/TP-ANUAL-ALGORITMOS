@@ -126,7 +126,7 @@ void guardarInventario(Producto productos[], int cantidadProductos) {
     }
 
     for (int i = 0; i < cantidadProductos; i++) {
-        fseek(f, i * sizeof(Producto), SEEK_END);
+        fseek(f, i * sizeof(Producto), SEEK_SET);
         fwrite(&productos[i], sizeof(Producto), 1, f);
     }
 
