@@ -163,7 +163,7 @@ int cargaComandas(FILE* f, Comanda comandas[]) {
 
     int cantidadComandas = 0;
 
-    while(cantidadComandas < Max_Comandas && fread(&comandas[cantidadComandas], sizeof(comanda), 1, f) == 1) {
+    while(cantidadComandas < Max_Comandas && fread(&comandas[cantidadComandas], sizeof(Comanda), 1, f) == 1) {
         cantidadComandas++;
     }
 
@@ -240,7 +240,7 @@ int main() {
 
         int cantidad;
         cout << "Ingrese cantidad:";
-        cin >> int cantidad;
+        cin >> cantidad;
         if (cantidad <= 0) {
             cout << "La cantidad debe ser mayor a cero";
             continue;
