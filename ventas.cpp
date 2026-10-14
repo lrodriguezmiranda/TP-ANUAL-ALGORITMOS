@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+using namespace std;
 
 const int k = 3;
 const float Tasa_Comision = 0.10f;
@@ -33,7 +34,7 @@ struct Comanda{
 
 void encriptar(char clave[]) {
     int i = 0;
-    while (clave [i] != '/0') {
+    while (clave [i] != '\0') {
         clave [i] = clave [i] + k;
         i++;
     }
@@ -43,7 +44,7 @@ void encriptar(char clave[]) {
 
 int cargaMozos(Mozo mozos[]) {
     FILE * f = fopen ("mozos.dat", "rb");
-    if (f == null){
+    if (f == NULL){
         cout << "No se pudo abrir mozos.dat" << endl;
         return 0;
     }
@@ -63,7 +64,7 @@ int buscarMozo (Mozo mozos[], int cantidadMozos, int idMozo){
 
     for(int i =0; i< cantidadMozos; i++) {
         
-        if (mozos[i].idMozo == int idMozo) {
+        if (mozos[i].idMozo == idMozo) {
             return i;
         }
     }
@@ -125,7 +126,7 @@ void guardarInventario(Producto productos[], int cantidadProductos) {
     }
 
     for (int i = 0; i < cantidadProductos, i++) {
-        fseek(f, i * sizeof(Producto), seek_set);
+        fseek(f, i * sizeof(Producto), SEEK_END);
         fwrite(&producto[i], sizeof(Producto), 1, f);
     }
 
@@ -135,7 +136,7 @@ void guardarInventario(Producto productos[], int cantidadProductos) {
 // Agregar comanda
 
 void agregarComanda(FILE* f, Comanda comanda) {
-    fseek (f, 0, seek_end);
+    fseek (f, 0, SEEK_END);
     fwrite (&comanda, sizeof(Comanda), 1, f);
 }
 
@@ -146,7 +147,7 @@ void ordenarComandas(Comanda comandas[], int cantidadComandas) {
     for (int i = 0; i < cantidadComandas - 1; i++) {
         for(int j = 0; j < cantidadComandas -1 - i; j++) {
             if(comandas[j].int idMozo > comandas[j + 1].idMozo) {
-                comanda aux = comandas [j];
+                Comanda aux = comandas [j];
                 comandas[j] = comandas [j + 1];
                 comandas[j + 1] = aux;
             }
@@ -170,16 +171,6 @@ int cargaComandas(FILE* f, Comanda comandas[]) {
 }
 
 // Comandas ordenadas
-
-void guardarComandsOrdenadas (FILE* f, Comanda comandas[], int cantidadComandas) {
-
-    ordenarComandas(comandas, cantidadComandas);
-    freopen(null, "w+b", f);
-
-    for (int i = 0; i < cantidadComandas; i++) {
-        fwrite(&comandas[i], sizeof(comanda), 1, f);
-    }
-}
 
 int main() {   
     Mozo mozos[Max_Mozos];
@@ -279,19 +270,23 @@ int main() {
     
     guardarInventario(productos, cantidadProductos);
     fclose(f);
-    f = fopen(nombreArchivo, "r+b");
+    f = fopen(nombreArchivo, "rb");
 
-    if(f != null) { 
-        cantidadComandas = cargaComandas(f, comandas);
-        ordenarComandas(comandas, cantidadComandas);
-        freopen(nombreArchivo, "wb", f);
+if (f != NULL) {
+    Comanda comandas[Max_Comandas];
+    int cantidadComandas = cargaComandas(f, comandas);
+    fclose(f);
 
-        for(int i = 0; i < cantidadComandas; i++) {
-            fwrite(&comandas[i], sizeof(comanda), 1, f);
+    ordenarComandas(comandas, cantidadComandas);
+    f = fopen(nombreArchivo, "wb");
+
+    if (f != NULL) {
+        for (int i = 0; i < cantidadComandas; i++) {
+            fwrite(&comandas[i], sizeof(Comanda), 1, f);
         }
         fclose(f);
     }
-
-    cout << "La planilla del dia se actualizo correctamente";
-    return 0;
+}
+cout << "La planilla del dia se actualizo correctamente";
+return 0;
 }
