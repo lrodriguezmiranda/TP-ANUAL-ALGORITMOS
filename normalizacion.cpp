@@ -65,7 +65,7 @@ int cargarComandasHistoricas(ComandaHistorica historicas[]) { //ARCHIVO DEL LA L
     }
 
     int cantidadRegistros = 0;
-    while (fread(&historicas[cantidadRegistros], sizeof(ComandaHistorica), 1, f) == 1) {
+    while (cantidadRegistros < MAX_COMANDAS && fread(&historicas[cantidadRegistros], sizeof(ComandaHistorica), 1, f) == 1) {
         cantidadRegistros++;
     }
 
@@ -80,7 +80,7 @@ int cargarInventario(Producto productos[]) {
         return 0;
     }
     int cantidadProductos = 0;
-    while (fread(&productos[cantidadProductos], sizeof(Producto), 1, f) == 1) {
+    while (cantidadProductos < MAX_PRODUCTOS && fread(&productos[cantidadProductos], sizeof(Producto), 1, f) == 1) {
         cantidadProductos++;
     }
     fclose(f);
@@ -136,19 +136,25 @@ int extraerMozos(ComandaHistorica historicas[], int cantidadHistoricas, Mozo moz
 
 void transformarComandas(ComandaHistorica historicas[], int cantidadHistoricas, Mozo mozos[], int cantidadMozos, Comanda comandas[], int& cantidadComandas){
     for(int i=0; i<cantidadHistoricas; i++){  
+    
+        //Busqueda secuencial de nombreMozo para obtener su idMozo
+        int posicion = -1;
         for(int j=0; j<cantidadMozos; j++){
-            //Busqueda secuencial de nombreMozo para obtener su idMozo
             if(strcmp(historicas[i].nombreMozo, mozos[j].nombre)==0){
-                comandas[cantidadComandas].idMozo=mozos[j].idMozo;
-                break;
+                posicion=j;
             }
         }
-
-        //Guardar las comandas transformadas en el arreglo comandas
-        comandas[cantidadComandas].codigoProducto=historicas[i].codigoProducto;
-        comandas[cantidadComandas].cantidad=historicas[i].cantidad;
-        comandas[cantidadComandas].comision=historicas[i].comision;
-        cantidadComandas++;
+        if(posicion != -1){
+            //Guardar las comandas transformadas en el arreglo comandas
+            comandas[cantidadComandas].idMozo=mozos[posicion].idMozo;
+            comandas[cantidadComandas].codigoProducto=historicas[i].codigoProducto;
+            comandas[cantidadComandas].cantidad=historicas[i].cantidad;
+            comandas[cantidadComandas].comision=historicas[i].comision;
+            cantidadComandas++;
+        }
+        else {
+            cout<<"No existe el mozo"<<endl;
+        }
     }
 }
 
@@ -207,7 +213,7 @@ void crearArchivosDiarios(ComandaHistorica historicas[], int cantidadHistoricas,
 
             for(int k=0; k<cantidadHistoricas; k++){
                 
-                //Si las fechas son iguales, corresponden al mismo archivo
+                //Comparacion de fechas
                 if(strcmp(historicas[i].fecha, historicas[k].fecha)==0){
                     comandasPorDia[cantidadComandasPorDia]=comandas[k];
                     cantidadComandasPorDia++;
@@ -226,6 +232,19 @@ void crearArchivosDiarios(ComandaHistorica historicas[], int cantidadHistoricas,
     }
 }
 
+void grabarInventario(Producto productos[], int cantidadProductos){
+    FILE* f = fopen("inventario.dat", "rb+");
+    if(f == NULL) return;
+    Producto p;
+    int i=0;
+    while(i<cantidadProductos && fread(&p, sizeof(Producto), 1, f)==1){
+        fseek(f, -(long)sizeof(Producto), SEEK_CUR);
+        fwrite(&productos[i], sizeof(Producto), 1, f);    
+        fseek(f, 0, SEEK_CUR);
+        i++;
+    }
+    fclose(f);
+}
 
 void grabarMozos(Mozo mozos[], int cantidadMozos) {
     FILE* f = fopen("mozos.dat", "wb");
@@ -247,11 +266,15 @@ int main() {
     ComandaHistorica historicas[MAX_COMANDAS]; //DECLARACIONES
     Mozo mozos[MAX_MOZOS];
     Comanda comandas[MAX_COMANDAS];
+    Producto productos[MAX_PRODUCTOS];
 
     cout << "Inicio del proceso de normalizacion" << endl;
 
     int cantidadHistoricas = cargarComandasHistoricas(historicas);
     cout << "Se cargaron " << cantidadHistoricas << " comandas historicas" << endl;
+
+    int cantidadProductos = cargarInventario(productos);
+    cout<<"Se cargaron "<< cantidadProductos << " productos"<<endl;
 
     int cantidadMozos = extraerMozos(historicas, cantidadHistoricas, mozos);
     cout << "Se identificaron " << cantidadMozos << " mozos unicos" << endl;
@@ -259,9 +282,16 @@ int main() {
     int cantidadComandas = 0;
 
     transformarComandas(historicas, cantidadHistoricas, mozos, cantidadMozos, comandas, cantidadComandas);
+    cout << "Comandas transformadas" << endl;
+
+    actualizarStock(historicas, cantidadHistoricas, productos, cantidadProductos);
+    cout << "Stock actualizado" << endl;
 
     crearArchivosDiarios(historicas, cantidadHistoricas, comandas);
     cout << "Archivos diarios creados" << endl;
+
+    grabarInventario(productos, cantidadProductos);
+    cout << "Archivo inventario.dat actualizado" << endl;
 
     grabarMozos(mozos, cantidadMozos);
     cout << "Archivo mozos.dat creado" << endl;
