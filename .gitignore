@@ -70,3 +70,8 @@ Testing/
 
 .vs/
 *.vsidx
+
+*.dat
+*.exe
+*.obj
+.vs/
