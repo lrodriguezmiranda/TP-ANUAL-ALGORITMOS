@@ -41,8 +41,10 @@ Partes claves de cada programa:
 Normalizacion: 
 	Extraccion de mozos: recorriendo todas las ventas y mirando si ya tenemos ese nombre en nuestra lista de mozos
 	asi no se repiten. Si esta, sumamos la comision. Si no, lo agregamos nuevo con un id (busqueda secuencial)
+    Transformación de las comandas: se recorren las comandas históricas y se buscan los nombres de los mozos. Se compara el nombre del mozo de cada comanda histórica con los nombres de la lista de mozos, aplicando una busqueda secuencial. Si coinciden, se genera una nueva comanda que contendrá el idMozo en lugar de su nombre y conservando el código del producto, la cantidad y la comisión.
 	Separacion de ventas por dia: recorriendo las ventas, armando el nombre del archivo segun la fecha y grabando todas las ventas de ese dia. 
 	Antes de grabar, las ordenamos por idmozo con (ordenamiento por insercion)
 	Actualizar el stock del inventario: recorriendo las ventas y, por cada una, buscando el producto en el array por su codigo con busqueda secuencial 
 	y restando cantidad al stock. Como la consigna lo pide, se usa "rb+" para leer y escribr sin borrar y no rehacer el inventario ("El inventario.dat no se crea: se va actualizando")
+
 
