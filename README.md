@@ -47,4 +47,5 @@ Normalizacion:
 	Actualizar el stock del inventario: recorriendo las ventas y, por cada una, buscando el producto en el array por su codigo con busqueda secuencial 
 	y restando cantidad al stock. Como la consigna lo pide, se usa "rb+" para leer y escribr sin borrar y no rehacer el inventario ("El inventario.dat no se crea: se va actualizando")
 
-
+Ventas:
+Primero carga los mozos y el inventario desde sus archivos. Después, busca al mozo por su ID con la búsqueda secuencial y verifica su contraseña. Después, busca el producto por su código y controla que exista, que la cantidad sea mayor a cero y que haya stock suficiente. Si todo está bien, registra la venta y calcula la comisión del 10 %. Las comandas se guardan en un archivo según la fecha. Para finalizar, las ordena por ID de mozo usando el método burbuja. Por último, actualiza el stock del inventario restando las cantidades vendidas. Para esto ocupa "r+b", porque necesita leer y escribir sin borrar el archivo ni crear uno nuevo.
