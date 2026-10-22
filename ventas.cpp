@@ -8,7 +8,6 @@ const int k = 3;
 const float Tasa_Comision = 0.10f;
 const int Max_Mozos = 50;
 const int Max_Productos = 100;
-const int Max_Comandas = 300;
 
 struct Producto {
     int codigo;
@@ -44,7 +43,7 @@ void encriptar(char clave[]) {
 // Carga de mozos
 
 int cargaMozos(Mozo mozos[]) {
-    FILE * f = fopen ("mozos.dat", "rb");
+    FILE* f = fopen ("mozos.dat", "rb");
     if (f == NULL){
         cout << "No se pudo abrir mozos.dat" << endl;
         return 0;
@@ -62,8 +61,7 @@ int cargaMozos(Mozo mozos[]) {
 // Buscar Mozos
 
 int buscarMozo (Mozo mozos[], int cantidadMozos, int idMozo){
-
-    for(int i =0; i< cantidadMozos; i++) {
+    for(int i = 0; i < cantidadMozos; i++) {
         
         if (mozos[i].idMozo == idMozo) {
             return i;
@@ -87,7 +85,7 @@ bool validarContrasena(Mozo mozo, char ClaveIngresada[]) {
 
 int cargarInventario (Producto productos[]) {
 
-    FILE * f = fopen("inventario.dat", "rb");
+    FILE* f = fopen("inventario.dat", "rb");
 
     if (f == NULL) {
         cout << "No se pudo abrir inventario.dat" << endl;
@@ -139,6 +137,25 @@ void guardarInventario(Producto productos[], int cantidadProductos) {
 void agregarComanda(FILE* f, Comanda comanda) {
     fseek (f, 0, SEEK_END);
     fwrite (&comanda, sizeof(Comanda), 1, f);
+}
+
+//Leer comandas del dia usando una lista dinamica
+
+list<Comanda> cargaComandas(FILE* f){
+   list<Comanda> comandas;
+   Comanda comanda;
+   rewind(f);
+
+   while (fread(&comanda, sizeof(Comanda), 1, f) == 1){
+       comandas.push_back(comanda);
+     }
+   return comandas;
+}
+
+// Compara comandas por numero de mozo
+
+bool compararComandas(const Comanda& a, const Comanda& b){
+    return a.idMozo < b.idMozo;
 }
 
 // Ordenar comandas por mozos
