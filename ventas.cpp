@@ -160,7 +160,7 @@ bool compararComandas(const Comanda& a, const Comanda& b){
 
 // Ordenar comandas por mozos
 
-void ordenarComandas (const Comanda& a, const Comanda& b){
+void ordenarComandas (list<Comanda>& comandas){
     comandas.sort(compararComandas);
 }
 
@@ -281,27 +281,17 @@ if (f == NULL) {
 
     // Ordenar las comandas por numero de mozo
 
-    ordenarComandas(comandas);
+   ordenarComandas(comandas);
 
-    // Guardar otra vez todas las comandas ordenadas
+   // Guardar otra vez todas las comandas ordenadas
 
-    f = fopen(nombre del archivo, "wb");
-    if (f == NULL){
-
-        cout << "No se pudo abrir la planilla para actualizarla" << endl;
-        return 1;
-    }
-
-    for (const Comanda& comanda : comandas) {
-        
-        if (fwrite(&comanda, sizeof(Comanda), 1, f) != 1){
-            cout << "Error al guardar las comandas" << endl;
-            fclose(f);
-            return 1;
-        }
-    }
-
-    fclose(f);
-    cout << "La planilla del dia se actualizo correctamente";
-    return 0;
+   f = fopen(nombreArchivo, "wb");
+   if (f == NULL){
+   cout << "No se pudo abrir la planilla para actualizarla" << endl;
+   return 1;
+   }
+}
+fclose(f);
+cout << "La planilla del dia se actualizo correctamente" << endl;
+return 0;
 }
