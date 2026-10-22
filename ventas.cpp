@@ -160,35 +160,11 @@ bool compararComandas(const Comanda& a, const Comanda& b){
 
 // Ordenar comandas por mozos
 
-void ordenarComandas(Comanda comandas[], int cantidadComandas) {
-
-    for (int i = 0; i < cantidadComandas - 1; i++) {
-        for(int j = 0; j < cantidadComandas -1 - i; j++) {
-            if(comandas[j].idMozo > comandas[j + 1].idMozo) {
-                Comanda aux = comandas [j];
-                comandas[j] = comandas [j + 1];
-                comandas[j + 1] = aux;
-            }
-        }
-    }
+void ordenarComandas (const Comanda& a, const Comanda& b){
+    comandas.sort(compararComandas);
 }
 
-// Leer comandas del dia
-
-int cargaComandas(FILE* f, Comanda comandas[]) {
-    
-    rewind(f);
-
-    int cantidadComandas = 0;
-
-    while(cantidadComandas < Max_Comandas && fread(&comandas[cantidadComandas], sizeof(Comanda), 1, f) == 1) {
-        cantidadComandas++;
-    }
-
-    return cantidadComandas;
-}
-
-// Comandas ordenadas
+// Programa principal
 
 int main() {   
     Mozo mozos[Max_Mozos];
@@ -212,7 +188,7 @@ int main() {
     char fecha[11];
     cout << "Ingrese la fecha (DD-MM-AAAA):";
     cin >> fecha;
-
+ 
     char nombreArchivo[40];
     strcpy (nombreArchivo, "comandas_");
     strcat(nombreArchivo, fecha);
@@ -281,30 +257,51 @@ int main() {
         productos[posicionProducto].stockActual -= cantidad;
         mozos[posicionMozo].totalComision += comision;
 
-        cout << "La venta se cargo correctamente";
-        cout << "¿Queres cargar otra venta?:";
+        cout << "La venta se cargo correctamente" << endl;
+        cout << "¿Queres cargar otra venta?:" << endl;
         cin >> continuar;
     }
+
+    //Guardar los cambios del inventario
     
     guardarInventario(productos, cantidadProductos);
     fclose(f);
+
+    //Abrir la planilla para leer todas las comandas
+    
     f = fopen(nombreArchivo, "rb");
 
-if (f != NULL) {
-    Comanda comandas[Max_Comandas];
-    int cantidadComandas = cargaComandas(f, comandas);
+if (f == NULL) {
+    cout << "No se pudo abrir la planilla para leerla" << endl;
+    return 1;
+}
+
+    list<Comanda> comandas = cargaComandas(f);
     fclose(f);
 
-    ordenarComandas(comandas, cantidadComandas);
-    f = fopen(nombreArchivo, "wb");
+    // Ordenar las comandas por numero de mozo
 
-    if (f != NULL) {
-        for (int i = 0; i < cantidadComandas; i++) {
-            fwrite(&comandas[i], sizeof(Comanda), 1, f);
-        }
-        fclose(f);
+    ordenarComandas(comandas);
+
+    // Guardar otra vez todas las comandas ordenadas
+
+    f = fopen(nombre del archivo, "wb");
+    if (f == NULL){
+
+        cout << "No se pudo abrir la planilla para actualizarla" << endl;
+        return 1;
     }
-}
-cout << "La planilla del dia se actualizo correctamente";
-return 0;
+
+    for (const Comanda& comanda : comandas) {
+        
+        if (fwrite(&comanda, sizeof(Comanda), 1, f) != 1){
+            cout << "Error al guardar las comandas" << endl;
+            fclose(f);
+            return 1;
+        }
+    }
+
+    fclose(f);
+    cout << "La planilla del dia se actualizo correctamente";
+    return 0;
 }
