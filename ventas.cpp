@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <list>
 using namespace std;
 
 const int k = 3;
