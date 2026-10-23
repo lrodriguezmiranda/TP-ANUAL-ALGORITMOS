@@ -294,7 +294,7 @@ if (f == NULL) {
 
 list<Comanda>::iterator it;
 
-    for(it = comandas.beging(); it != comandas.end(); ++it){
+    for(it = comandas.begin(); it != comandas.end(); ++it){
         if(fwrite(&(*it), sizeof(Comanda), 1, f) != 1){
             cout << "Error al guardar las comandas" << endl;
             fclose(f);
