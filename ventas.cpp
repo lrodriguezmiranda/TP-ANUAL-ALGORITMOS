@@ -292,12 +292,13 @@ if (f == NULL) {
      return 1;
    }
 
-for (it = comandas.beging(); it != comandas.end(); ++it){
+list<Comanda>::iterator it;
 
-    if (fwrite(&(*it), sizeof(Comanda), 1, f) != 1){
-        cout << "Error al guardar las comandas" << endl;
-        fclose(f);
-        return 1;
+    for(it = comandas.beging(); it != comandas.end(); ++it){
+        if(fwrite(&(*it), sizeof(Comanda), 1, f) != 1){
+            cout << "Error al guardar las comandas" << endl;
+            fclose(f);
+            return 1;
     }
 }
 
