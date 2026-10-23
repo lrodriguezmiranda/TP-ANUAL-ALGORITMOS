@@ -292,17 +292,15 @@ if (f == NULL) {
      return 1;
    }
 
-  for (const Comanda& comanda : comandas){
-     
-     if(fwrite(&comanda, sizeof(Comanda), 1, f) != 1){
-     cout << "Error al guardar las comandas" << endl;
-     fclose(f);
-     return 1;
+for (it = comandas.beging(); it != comandas.end(); ++it){
+    cout << "Error al guardar las comandas" << endl;
+    fclose(f);
+    return 1;
      }
   }
+
 fclose(f);
-
 cout << "La planilla del dia se actualizo correctamente" << endl;
-
 return 0;
+
 }
