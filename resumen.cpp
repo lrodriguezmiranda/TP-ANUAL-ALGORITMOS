@@ -20,9 +20,23 @@ int main() {
   int totalBuffet = 0;
 
   float comisionMozo;
+  int numeroSemana;
+  int mes;
 
-  archivo = fopen("comandas_semana_s1-06.dat","rb");
+  char nombreArchivo[50];
 
+//Pido qué semana quiero consultar
+  cout << "Numero de semana: ";
+  cin >> numeroSemana;
+  cout << "Mes: ";
+  cin >> mes;
+
+// Armo el nombre del archivo semanal
+  sprintf(nombreArchivo, "comandas_semana_s%d-%02d.dat", numeroSemana, mes);
+
+// Abro el archivo semanal
+  archivo = fopen(nombreArchivo, "rb");
+    
 // Si el archivo no existe, termina el programa
   if(archivo == NULL){
     cout << "No existe el archivo";
@@ -31,7 +45,7 @@ int main() {
 
 // Leo el 1er registro
     
-  if(fread(&reg,sizeof(Comanda),1,archivo)==1){
+  if(fread(&reg,sizeof(Comanda), 1, archivo) == 1 ){
     while (true) {
       mozoActual = reg.idMozo;   // Empieza un nuevo mozo
 
@@ -45,7 +59,7 @@ int main() {
         totalBuffet += reg.cantidad;
 
 // Intento leer el siguiente registro
-        if(fread(&reg,sizeof(Comanda),1,archivo)!=1) {
+        if(fread(&reg, sizeof(Comanda), 1, archivo) != 1) {
                     reg.idMozo = -1;    // Si no lo puedo leer, llegué al final
                     break;
                 }
