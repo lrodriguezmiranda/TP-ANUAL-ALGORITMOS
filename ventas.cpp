@@ -286,12 +286,23 @@ if (f == NULL) {
    // Guardar otra vez todas las comandas ordenadas
 
    f = fopen(nombreArchivo, "wb");
-   if (f == NULL){
-   cout << "No se pudo abrir la planilla para actualizarla" << endl;
-   return 1;
+
+   if(f == NULL){
+     cout << "No se pudo abrir la planilla para actualizarla" << endl;
+     return 1;
    }
-}
+
+  for (const Comanda& comanda : comandas){
+     
+     if(fwrite(&comanda, sizeof(Comanda), 1, f) != 1){
+     cout << "Error al guardar las comandas" << endl;
+     fclose(f);
+     return 1;
+     }
+  }
 fclose(f);
+
 cout << "La planilla del dia se actualizo correctamente" << endl;
+
 return 0;
 }
