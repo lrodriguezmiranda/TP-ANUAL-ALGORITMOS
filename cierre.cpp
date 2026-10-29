@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdio>
-#include <cstring>
 
 using namespace std;
 
@@ -14,7 +13,6 @@ struct Comanda {
     float comision;
 };
 
-
 int abrirArchivosSemana(FILE* archivos[], int anio, int mes, int semana)
 {
     int primerDia = (semana - 1) * 7 + 1;
@@ -27,24 +25,26 @@ int abrirArchivosSemana(FILE* archivos[], int anio, int mes, int semana)
         if (dia > 31)
             break;
 
-        char nombreArchivo[50];
+        char nombreArchivo[MAX_NOMBRE];
 
-        sprintf_s(
+        snprintf(
             nombreArchivo,
+            sizeof(nombreArchivo),
             "comandas_%02d-%02d-%04d.dat",
             dia,
             mes,
             anio
         );
 
-        FILE* archivo = nullptr;
-        fopen_s(&archivo, nombreArchivo, "rb");
+        FILE* archivo = fopen(nombreArchivo, "rb");
 
-        archivos[cantidadArchivos] = archivo;
-
-        if (archivos[cantidadArchivos] != NULL)
+        if (archivo != NULL)
         {
-            cout << "Se encontro: " << nombreArchivo << endl;
+            archivos[cantidadArchivos] = archivo;
+
+            cout << "Se encontro: "
+                 << nombreArchivo << endl;
+
             cantidadArchivos++;
         }
     }
@@ -84,7 +84,8 @@ void combinarArchivos(
             if (hayComanda[i])
             {
                 if (posicionMenor == -1 ||
-                    actuales[i].idMozo < actuales[posicionMenor].idMozo)
+                    actuales[i].idMozo <
+                    actuales[posicionMenor].idMozo)
                 {
                     posicionMenor = i;
                 }
@@ -169,25 +170,27 @@ int main()
 
     if (cantidadArchivos == 0)
     {
-        cout << "No se encontraron planillas para esa semana." << endl;
+        cout << "No se encontraron planillas para esa semana."
+             << endl;
         return 1;
     }
 
-    char nombreSemanal[50];
+    char nombreSemanal[MAX_NOMBRE];
 
-    sprintf_s(
+    snprintf(
         nombreSemanal,
+        sizeof(nombreSemanal),
         "comandas_semana_s%d-%02d.dat",
         semana,
         mes
     );
 
-    FILE* archivoSemanal = nullptr;
-    fopen_s(&archivoSemanal, nombreSemanal, "wb");
+    FILE* archivoSemanal = fopen(nombreSemanal, "wb");
 
     if (archivoSemanal == NULL)
     {
-        cout << "No se pudo crear el archivo semanal." << endl;
+        cout << "No se pudo crear el archivo semanal."
+             << endl;
 
         cerrarArchivos(archivos, cantidadArchivos);
 
@@ -205,7 +208,8 @@ int main()
     cerrarArchivos(archivos, cantidadArchivos);
 
     cout << endl;
-    cout << "El cierre semanal se realizo correctamente." << endl;
+    cout << "El cierre semanal se realizo correctamente."
+         << endl;
     cout << "Archivo generado: " << nombreSemanal << endl;
 
     return 0;
