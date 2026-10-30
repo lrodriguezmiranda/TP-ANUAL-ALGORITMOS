@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <list>
 using namespace std;
 
 const int k = 3;
@@ -28,6 +27,13 @@ struct Comanda{
     int codigoProducto;
     int cantidad;
     float comision;
+};
+
+// Nodo de la lista enlazada
+
+struct Nodo {
+    Comanda dato;
+    Nodo* siguiente;
 };
 
 // Encriptar / Desencriptar
@@ -139,29 +145,36 @@ void agregarComanda(FILE* f, Comanda comanda) {
     fwrite (&comanda, sizeof(Comanda), 1, f);
 }
 
-//Leer comandas del dia usando una lista dinamica
+// Comanda ordenada en la lista enlazada
 
-list<Comanda> cargaComandas(FILE* f){
-   list<Comanda> comandas;
-   Comanda comanda;
-   rewind(f);
+void insertarOrdenado(Nodo*& lista, Comanda comanda) {
+    Nodo* nuevo = new Nodo;
+    nuevo->dato = comanda;
+    nuevo->siguiente = NULL;
 
-   while (fread(&comanda, sizeof(Comanda), 1, f) == 1){
-       comandas.push_back(comanda);
-     }
-   return comandas;
+    if (lista == NULL || comanda.idMozo < lista->dato.idMozo) {
+        nuevo->siguiente = lista;
+        lista = nuevo;
+    } else {
+        Nodo* actual = lista;
+        while (actual->siguiente != NULL && actual->dato.idMozo <= comanda.idMozo) {
+            actual = actual->siguiente;
+        }
+        nuevo->siguiente = actual->siguiente;
+        actual->siguiente = nuevo
+    }
 }
+// Leer comandas del dia y agregarlas ordenadas
 
-// Compara comandas por numero de mozo
+Nodo* cargaComandas(FILE* f) {
+    Nodo* lista = NULL;
+    Comanda comanda;
+    rewind(f);
 
-bool compararComandas(const Comanda& a, const Comanda& b){
-    return a.idMozo < b.idMozo;
-}
-
-// Ordenar comandas por mozos
-
-void ordenarComandas (list<Comanda>& comandas){
-    comandas.sort(compararComandas);
+    while (fread(&comanda, sizeof(Comanda), 1, f) == 1) {
+        insertarOrdenado(lista, comanda);
+    }
+    return lista;
 }
 
 // Programa principal
@@ -262,12 +275,12 @@ int main() {
         cin >> continuar;
     }
 
-    //Guardar los cambios del inventario
+    // Guardar los cambios del inventario
     
     guardarInventario(productos, cantidadProductos);
     fclose(f);
 
-    //Abrir la planilla para leer todas las comandas
+    // Abrir la planilla para leer todas las comandas
     
     f = fopen(nombreArchivo, "rb");
 
@@ -276,33 +289,47 @@ if (f == NULL) {
     return 1;
 }
 
-    list<Comanda> comandas = cargaComandas(f);
+Nodo* lista = cargaComandas(f);
     fclose(f);
 
-    // Ordenar las comandas por numero de mozo
-
-   ordenarComandas(comandas);
-
-   // Guardar otra vez todas las comandas ordenadas
+   // Guardar todas las comandas ordenadas
 
    f = fopen(nombreArchivo, "wb");
 
    if(f == NULL){
-     cout << "No se pudo abrir la planilla para actualizarla" << endl;
-     return 1;
+       cout << "No se pudo abrir la planilla para actualizarla" << endl;
+       while (lista != NULL) {
+           Nodo* auxiliar = lista;
+           lista = lista->siguiente;
+           delete auxiliar;
+       }
+       return 1;
    }
-
-list<Comanda>::iterator it;
-
-    for(it = comandas.begin(); it != comandas.end(); ++it){
-        if(fwrite(&(*it), sizeof(Comanda), 1, f) != 1){
+    Nodo* actual = lista;
+    while(actual != NULL) {
+        if (fwrite(&actual->dato, sizeof(comanda), 1, f) != 1) {
             cout << "Error al guardar las comandas" << endl;
             fclose(f);
+
+            while (lista != NULL) {
+                Nodo* auxiliar = lista;
+                lista = lista->siguiente;
+                delete auxiliar;
+            }
             return 1;
+        }
+        actual = actual->siguiente;
     }
+    fclose(f);
+
+    // Liberar la memoria de la lista
+
+    while (lista != NULL){
+        Nodo* auxiliar = lista;
+        lista = lista->siguiente;
+        delete auxiliar;
 }
 
-fclose(f);
 cout << "La planilla del dia se actualizo correctamente" << endl;
 return 0;
 
