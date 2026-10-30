@@ -308,7 +308,7 @@ Nodo* lista = cargaComandas(f);
    }
     Nodo* actual = lista;
     while(actual != NULL) {
-        if (fwrite(&actual->dato, sizeof(comanda), 1, f) != 1) {
+        if (fwrite(&actual->dato, sizeof(Comanda), 1, f) != 1) {
             cout << "Error al guardar las comandas" << endl;
             fclose(f);
 
