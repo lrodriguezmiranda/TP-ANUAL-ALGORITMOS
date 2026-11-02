@@ -152,7 +152,7 @@ Nodo* insertarOrdenado(Nodo* lista, Comanda comanda){
     nuevo->dato = comanda;
     nuevo->siguiente = NULL;
 
-    if(lista = NULL || comanda.idMozo < lista->dato.idMozo){
+    if(lista == NULL || comanda.idMozo < lista->dato.idMozo){
         nuevo->siguiente = lista;
         return nuevo;
     }
