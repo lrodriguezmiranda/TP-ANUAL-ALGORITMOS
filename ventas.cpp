@@ -147,33 +147,33 @@ void agregarComanda(FILE* f, Comanda comanda) {
 
 // Comanda ordenada en la lista enlazada
 
-void insertarOrdenado(Nodo*& lista, Comanda comanda) {
+Nodo* insertarOrdenado(Nodo* lista, Comanda comanda){
     Nodo* nuevo = new Nodo;
     nuevo->dato = comanda;
     nuevo->siguiente = NULL;
 
-    if (lista == NULL || comanda.idMozo < lista->dato.idMozo) {
+    if(lista = NULL || comanda.idMozo < lista->dato.idMozo){
         nuevo->siguiente = lista;
-        lista = nuevo;
-    } 
-    else {
-        Nodo* actual = lista;
-        while (actual->siguiente != NULL && actual->siguiente->dato.idMozo <= comanda.idMozo) {
-            actual = actual->siguiente;
-        }
-        nuevo->siguiente = actual->siguiente;
-        actual->siguiente = nuevo;
+        return nuevo;
     }
+    Nodo* actual = lista;
+    while (actual->siguiente != NULL && actual->dato.idMozo <= comanda.idMozo){
+        actual = actual->siguiente;
+    }
+    nuevo->siguiente = actual->siguiente;
+    actual->siguiente = nuevo;
+    return lista;
 }
+
 // Leer comandas del dia y agregarlas ordenadas
 
 Nodo* cargaComandas(FILE* f) {
     Nodo* lista = NULL;
     Comanda comanda;
-    rewind(f);
+    fseek(f, 0, SEEK_SET);
 
     while (fread(&comanda, sizeof(Comanda), 1, f) == 1) {
-        insertarOrdenado(lista, comanda);
+       lista = insertarOrdenado(lista, comanda);
     }
     return lista;
 }
