@@ -157,7 +157,7 @@ Nodo* insertarOrdenado(Nodo* lista, Comanda comanda){
         return nuevo;
     }
     Nodo* actual = lista;
-    while (actual->siguiente != NULL && actual->dato.idMozo <= comanda.idMozo){
+    while (actual->siguiente != NULL && actual->siguiente->dato.idMozo <= comanda.idMozo){
         actual = actual->siguiente;
     }
     nuevo->siguiente = actual->siguiente;
